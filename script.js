@@ -19,7 +19,6 @@ const gameboard = (function () {
     };
 
     // Checks if location is a valid location first before placing symbol.
-    // CURRENT BUG: ALWAYS RETURN FALSE???
     const checkValidLocation = (value) => {
         switch (parseInt(value)) {
             case 1:
