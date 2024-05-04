@@ -23,42 +23,42 @@ const gameboard = (function () {
     const checkValidLocation = (value) => {
         switch (parseInt(value)) {
             case 1:
-                if (board[0][0])
+                if (board[0][0] === null)
                     return true;
                 return false;
             case 2:
-                if (board[0][1])
+                if (board[0][1] === null)
                     return true;
                 return false;
             case 3:
-                if (board[0][2])
+                if (board[0][2] === null)
                     return true;
                 return false;
             case 4:
-                if (board[1][0])
+                if (board[1][0] === null)
                     return true;
                 return false;
             case 5:
-                if (board[1][1])
+                if (board[1][1] === null)
                     return true;
                 return false;
             case 6:
-                if (board[1][2])
+                if (board[1][2] === null)
                     return true;
                 return false;
             case 7:
-                if (board[2][0])
+                if (board[2][0] === null)
                     return true;
                 return false;
             case 8:
-                if (board[2][1])
+                if (board[2][1] === null)
                     return true;
                 return false;
             case 9:
-                if (board[2][2])
+                if (board[2][2] === null)
                     return true;
                 return false;
-        };
+        }
     };
 
     const placeSymbol = (location, symbol) => {
