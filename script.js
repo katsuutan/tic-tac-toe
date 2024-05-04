@@ -6,7 +6,7 @@ const gameboard = (function () {
     for (let i = 0; i < 3; i++) {
         board[i] = [];
         for (let j = 0; j < 3; j++) {
-            board[i].push('');
+            board[i].push(null);
         }
     }
 
@@ -16,6 +16,49 @@ const gameboard = (function () {
 
     const displayBoard = () => {
         console.log(board);
+    };
+
+    // Checks if location is a valid location first before placing symbol.
+    // CURRENT BUG: ALWAYS RETURN FALSE???
+    const checkValidLocation = (value) => {
+        switch (parseInt(value)) {
+            case 1:
+                if (board[0][0])
+                    return true;
+                return false;
+            case 2:
+                if (board[0][1])
+                    return true;
+                return false;
+            case 3:
+                if (board[0][2])
+                    return true;
+                return false;
+            case 4:
+                if (board[1][0])
+                    return true;
+                return false;
+            case 5:
+                if (board[1][1])
+                    return true;
+                return false;
+            case 6:
+                if (board[1][2])
+                    return true;
+                return false;
+            case 7:
+                if (board[2][0])
+                    return true;
+                return false;
+            case 8:
+                if (board[2][1])
+                    return true;
+                return false;
+            case 9:
+                if (board[2][2])
+                    return true;
+                return false;
+        };
     };
 
     const placeSymbol = (location, symbol) => {
@@ -50,7 +93,7 @@ const gameboard = (function () {
         console.log ('placeSymbol ran correctly');
     };
 
-    return {getBoard, displayBoard, placeSymbol};
+    return {getBoard, displayBoard, placeSymbol, checkValidLocation};
 })();
 
 
@@ -91,15 +134,17 @@ function gameController(playerOneName = 'Player One', playerTwoName = 'Player Tw
 
     const play = () => {
         let location = prompt("Select a position for your token (value '1-9').");
-        
-        // Checks if location is a valid location first before placing symbol.
+    
+        let valid = board.checkValidLocation(location);
+        if (valid) {
+            board.placeSymbol(parseInt(location), activePlayer.getSymbol());
 
-
-        // ---
-
-        board.placeSymbol(parseInt(location), activePlayer.getSymbol());
-        alternateTurns();
-        updateBoard();
+            alternateTurns();
+            updateBoard();
+        } else {
+            console.log('There is already a token at that location. Please choose another one.');
+            updateBoard();
+        }
     };
 
     updateBoard();
