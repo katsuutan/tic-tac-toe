@@ -55,20 +55,15 @@ const gameboard = (function () {
 
 
 // Players will be stored in objects
-function createPlayer (team, name) {
-    const symbol = team; // Sets which player is X and which is O
+function createPlayer (token, name) {
+    const symbol = token; // Sets which player is X and which is O
     const playerName = name;
 
     const getSymbol = () => symbol;
-
     const getPlayerName = () => playerName;
 
     return {getSymbol, getPlayerName};
 };
-
-function symbol() {
-
-}
 
 
 // GameController to control the flow and state of the game's turns, and checks if there is a winner.
@@ -81,27 +76,33 @@ function gameController(playerOneName = 'Player One', playerTwoName = 'Player Tw
 
     let activePlayer = playerOne;
 
-    const getActivePlayer = () => activePlayer;
-
     const alternateTurns = () => {
         if (activePlayer === playerOne)
             activePlayer = playerTwo;
         else
             activePlayer = playerOne;
     };
+    const getActivePlayer = () => activePlayer;
 
     const updateBoard = () => {
         board.displayBoard();
+        console.log(`${activePlayer.getPlayerName()}'s turn.`);
     };
 
     const play = () => {
         let location = prompt("Select a position for your token (value '1-9').");
         
-        board.placeSymbol(parseInt(location), activePlayer.getSymbol());
+        // Checks if location is a valid location first before placing symbol.
 
+
+        // ---
+
+        board.placeSymbol(parseInt(location), activePlayer.getSymbol());
         alternateTurns();
         updateBoard();
     };
+
+    updateBoard();
 
     return {play, getActivePlayer};
 };
