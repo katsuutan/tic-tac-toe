@@ -1,14 +1,17 @@
 // Store gameboard as an array inside a Gameboard object.
 const gameboard = (function () {
-    const board = [];
+    let board = [];
 
-    // Create 2d array to display gameboard in console
-    for (let i = 0; i < 3; i++) {
-        board[i] = [];
-        for (let j = 0; j < 3; j++) {
-            board[i].push(null);
+    // Creates and resets the board
+    const createBoard = () => {
+        // Create 2d array to display gameboard in console
+        for (let i = 0; i < 3; i++) {
+            board[i] = [];
+            for (let j = 0; j < 3; j++) {
+                board[i].push(null);
+            }
         }
-    }
+    };
 
     const getBoard = () => {
         return board;
@@ -61,7 +64,18 @@ const gameboard = (function () {
     };
 
     const placeSymbol = (location, symbol) => {
-        switch (location) {
+        // Updates the Frontend Display
+        let cellLocation = document.getElementById(location);
+        const cellImage = document.createElement('img');
+        if (symbol === 'O')
+            cellImage.setAttribute('src', '/img/circle.svg');
+        else
+            cellImage.setAttribute('src', '/img/cross.svg');
+
+        cellLocation.appendChild(cellImage);
+        
+        // Tracks the game progress in the console
+        switch (parseInt(location)) {
             case 1:
                 board[0][0] = symbol;
                 break;
@@ -120,7 +134,37 @@ const gameboard = (function () {
         return null; // Returns null (a falsy value) if no winners yet.
     };
 
-    return {getBoard, displayBoard, placeSymbol, checkValidLocation, checkWinner};
+
+    const cells = document.querySelectorAll('.game-cell'); // Selects game cells
+
+    let runPlay = function () {
+        game.play(this.id);
+    };
+
+    // Creates clickable cells for tic tac toe game
+    const addClick = () => {
+        cells.forEach((cell) => {
+            cell.addEventListener('click', runPlay);
+        });
+    };
+    addClick(); // Makes initial board
+
+    // Clears clickable cells
+    const clearClick = () => {
+        cells.forEach((cell) => {
+            cell.removeEventListener('click', runPlay);
+        });
+    };
+    
+    // Clear symbols in cells
+    const clearCells = () => {
+        cells.forEach((cell) => {
+            while (cell.firstChild)
+                cell.removeChild(cell.firstChild);
+        });
+    };
+
+    return {createBoard, getBoard, displayBoard, placeSymbol, checkValidLocation, checkWinner, addClick, clearClick, clearCells};
 })();
 
 
@@ -139,11 +183,13 @@ function createPlayer (token, name) {
 // GameController to control the flow and state of the game's turns, and checks if there is a winner.
 function gameController(playerOneName = 'Player One', playerTwoName = 'Player Two') {
     let board = gameboard;
+    board.createBoard();
     let turnCount = 0;
 
     const playerOne = createPlayer('O', playerOneName);
     const playerTwo = createPlayer('X', playerTwoName);
     
+    const display = document.querySelector('.display');
 
     let activePlayer = playerOne; // Default sets to player one as one will always go first.
 
@@ -158,22 +204,25 @@ function gameController(playerOneName = 'Player One', playerTwoName = 'Player Tw
 
     // Displays current board and current player's turn.
     const updateBoard = () => {
+        /*
         board.displayBoard();
         console.log(`${activePlayer.getPlayerName()}'s turn.`);
+        */
+        display.textContent = `${activePlayer.getPlayerName()}'s turn.`;
     };
 
     // Runs every round
-    const play = () => {
-        let location = prompt(`${activePlayer.getPlayerName}: Select a position for your token (value '1-9').`);
+    const play = (location) => {
 
         let valid = board.checkValidLocation(location);
         // If valid = true (empty cell)
         if (valid) {
-            board.placeSymbol(parseInt(location), activePlayer.getSymbol());
+            board.placeSymbol(location, activePlayer.getSymbol());
 
             // Checks for winner after token placement
             if (board.checkWinner()) {
-                console.log(`${activePlayer.getPlayerName()} wins!`);
+                display.textContent = `${activePlayer.getPlayerName()} wins!`;
+                board.clearClick(); // Clears clickable cell to prevent player from continuing after a win.
                 return 0; // Ends the play function call
             }
 
@@ -181,17 +230,25 @@ function gameController(playerOneName = 'Player One', playerTwoName = 'Player Tw
             updateBoard();
             turnCount++;
         } else {
-            console.log('There is already a token at that location. Please choose another one.');
+            display.textContent = `${activePlayer.getPlayerName()}, please select a valid location.`;
         }
 
         // Checks for tie scenario
         if (turnCount >= 9)
-            console.log("It's a tie!");
+            display.textContent = "It's a tie!!";
+    };
+
+    const restart = () => {
+        board.clearCells(); // Removes placed tokens/symbols
+        board.clearClick();
+        board.addClick();
+        board.createBoard();
+        turnCount = 0;
     };
 
     updateBoard(); // Initial board display
 
-    return {play, getActivePlayer};
+    return {play, getActivePlayer, restart};
 };
 
 // Runs the game
