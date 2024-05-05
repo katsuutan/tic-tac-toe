@@ -68,9 +68,9 @@ const gameboard = (function () {
         let cellLocation = document.getElementById(location);
         const cellImage = document.createElement('img');
         if (symbol === 'O')
-            cellImage.setAttribute('src', '/img/circle.svg');
+            cellImage.setAttribute('src', 'img/circle.svg');
         else
-            cellImage.setAttribute('src', '/img/cross.svg');
+            cellImage.setAttribute('src', 'img/cross.svg');
 
         cellLocation.appendChild(cellImage);
         
